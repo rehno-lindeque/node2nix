@@ -278,7 +278,7 @@ let
     });
 
   # Builds a development shell
-  buildNodeShell = { name, packageName, version, src, dependencies ? [], production ? true, npmFlags ? "", dontNpmInstall ? false, ... }@args:
+  buildNodeShell = { name, packageName, version, src, dependencies ? [], production ? true, npmFlags ? "", dontNpmInstall ? false, preRebuild ? "", ... }@args:
     let
       nodeDependencies = stdenv.mkDerivation {
         name = "node-dependencies-${name}-${version}";
@@ -312,6 +312,7 @@ let
           patchShebangs .
 
           export HOME=$PWD
+          runHook preRebuild
           npm --registry http://www.example.com --nodedir=${nodeSources} ${npmFlags} ${stdenv.lib.optionalString production "--production"} rebuild
 
           ${stdenv.lib.optionalString (!dontNpmInstall) ''
