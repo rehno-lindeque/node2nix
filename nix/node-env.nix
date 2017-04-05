@@ -325,7 +325,7 @@ let
         '';
       };
     in
-    stdenv.lib.makeOverridable stdenv.mkDerivation {
+    stdenv.lib.makeOverridable stdenv.mkDerivation (builtins.removeAttrs args [ "dependencies" ] // {
       name = "node-shell-${name}-${version}";
 
       buildInputs = [ python nodejs ] ++ stdenv.lib.optional (stdenv.isLinux) utillinux ++ args.buildInputs or [];
@@ -344,6 +344,6 @@ let
       shellHook = stdenv.lib.optionalString (dependencies != []) ''
         export NODE_PATH=$nodeDependencies/lib/node_modules
       '';
-    };
+    });
 in
 { inherit buildNodeSourceDist buildNodePackage buildNodeShell; }
